@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Layout helpers */
+.container-max {
+  @apply max-w-6xl mx-auto px-4;
+}
+.section-pad {
+  @apply py-14 md:py-20;
+}
+
+/* Smooth text rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+  daisyUI theme tokens are applied via data-theme on <html>.
+  set it in useTheme() composable.
+*/
+
+/* nicer page background */
+body {
+  @apply bg-base-100 text-base-content;
+}

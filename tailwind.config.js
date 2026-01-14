@@ -1,0 +1,48 @@
+export default {
+  content: ["./index.html", "./src/**/*.{vue,js}"],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        unitLight: {
+          primary: "#5B5CFF" /* purple */,
+          "primary-content": "#ffffff",
+          secondary: "#2B7BFF" /* blue */,
+          "secondary-content": "#ffffff",
+          accent: "#7C3AED" /* purple deep */,
+          "accent-content": "#ffffff",
+          neutral: "#0B1020",
+          "neutral-content": "#ffffff",
+          "base-100": "#ffffff",
+          "base-200": "#F4F7FF",
+          "base-300": "#E6ECFF",
+          "base-content": "#0B1020",
+          info: "#2B7BFF",
+          success: "#16A34A",
+          warning: "#F59E0B",
+          error: "#EF4444",
+        },
+      },
+      {
+        unitDark: {
+          primary: "#7C3AED" /* purple */,
+          "primary-content": "#ffffff",
+          secondary: "#2B7BFF" /* blue */,
+          "secondary-content": "#ffffff",
+          accent: "#5B5CFF",
+          "accent-content": "#ffffff",
+          neutral: "#E5E7EB",
+          "neutral-content": "#0B1020",
+          "base-100": "#070A13",
+          "base-200": "#0B1020",
+          "base-300": "#101A33",
+          "base-content": "#E5E7EB",
+          info: "#60A5FA",
+          success: "#22C55E",
+          warning: "#FBBF24",
+          error: "#F87171",
+        },
+      },
+    ],
+  },
+};
