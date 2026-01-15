@@ -27,5 +27,6 @@ export function initTheme() {
 }
 
 export function useTheme() {
+  console.log("theme changed");
   return { theme, applyTheme, toggleTheme };
 }

@@ -1,7 +1,44 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "unitLight";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-primary: #5b5cff;
+  --color-primary-content: #ffffff;
+  --color-secondary: #2b7bff;
+  --color-secondary-content: #ffffff;
+  --color-accent: #7c3aed;
+  --color-accent-content: #ffffff;
+  --color-neutral: #0b1020;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f4f7ff;
+  --color-base-300: #e6ecff;
+  --color-base-content: #0b1020;
+}
 
-/* Layout helpers */
+@plugin "daisyui/theme" {
+  name: "unitDark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-primary: #7c3aed;
+  --color-primary-content: #ffffff;
+  --color-secondary: #2b7bff;
+  --color-secondary-content: #ffffff;
+  --color-accent: #5b5cff;
+  --color-accent-content: #ffffff;
+  --color-neutral: #e5e7eb;
+  --color-neutral-content: #0b1020;
+  --color-base-100: #070a13;
+  --color-base-200: #0b1020;
+  --color-base-300: #101a33;
+  --color-base-content: #e5e7eb;
+}
+
+/* helpers */
 .container-max {
   @apply max-w-6xl mx-auto px-4;
 }
@@ -9,18 +46,11 @@
   @apply py-14 md:py-20;
 }
 
-/* Smooth text rendering */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/*
-  daisyUI theme tokens are applied via data-theme on <html>.
-  set it in useTheme() composable.
-*/
-
-/* nicer page background */
 body {
   @apply bg-base-100 text-base-content;
 }
