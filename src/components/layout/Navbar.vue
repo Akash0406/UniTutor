@@ -90,36 +90,6 @@ onBeforeUnmount(() => {
         <nav class="hidden lg:flex items-center gap-2">
           <button class="btn btn-ghost btn-sm" @click="go('/')">Home</button>
 
-          <!-- Solutions -->
-          <div class="relative">
-            <button
-              class="btn btn-ghost btn-sm inline-flex items-center gap-2"
-              :class="openMenu === 'solutions' ? 'bg-base-200/60' : ''"
-              @click="toggleMenu('solutions')"
-            >
-              Solutions
-              <span class="opacity-70">▾</span>
-            </button>
-
-            <div
-              v-show="openMenu === 'solutions'"
-              class="absolute left-0 mt-2 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg overflow-hidden"
-            >
-              <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="scrollToEOI()"
-              >
-                Expression of Interest
-              </button>
-              <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="go('/about')"
-              >
-                How UniT works
-              </button>
-            </div>
-          </div>
-
           <!-- News & Events -->
           <div class="relative">
             <button
@@ -205,7 +175,7 @@ onBeforeUnmount(() => {
 
           <button
             class="btn btn-outline btn-sm hidden sm:inline-flex"
-            @click="scrollToEOI"
+            @click="go('/career')"
           >
             Expression of Interest
           </button>
