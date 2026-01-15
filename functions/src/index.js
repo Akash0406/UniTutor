@@ -12,7 +12,6 @@ export const submitTutorEOI = onCall(
     try {
       const parsed = TutorEoiZodSchema.safeParse(request.data);
       if (!parsed.success) {
-        // Log the validation issues so you can see them in functions:log
         console.warn("Validation failed:", parsed.error.issues);
         throw new HttpsError("invalid-argument", "Invalid form data", {
           issues: parsed.error.issues,

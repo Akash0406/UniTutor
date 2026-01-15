@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Tutor Expression of Interest payload validation.
- * Keep strict validation on the server so the DB remains clean.
+ * strict validation on the server so the DB remains clean.
  */
 export const TutorEoiZodSchema = z.object({
   fullName: z.string().min(2).max(80),
