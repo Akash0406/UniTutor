@@ -5,11 +5,11 @@ export default {
     themes: [
       {
         unitLight: {
-          primary: "#5B5CFF" /* purple */,
+          primary: "#5B5CFF",
           "primary-content": "#ffffff",
-          secondary: "#2B7BFF" /* blue */,
+          secondary: "#2B7BFF",
           "secondary-content": "#ffffff",
-          accent: "#7C3AED" /* purple deep */,
+          accent: "#7C3AED",
           "accent-content": "#ffffff",
           neutral: "#0B1020",
           "neutral-content": "#ffffff",
@@ -25,9 +25,9 @@ export default {
       },
       {
         unitDark: {
-          primary: "#7C3AED" /* purple */,
+          primary: "#7C3AED",
           "primary-content": "#ffffff",
-          secondary: "#2B7BFF" /* blue */,
+          secondary: "#2B7BFF",
           "secondary-content": "#ffffff",
           accent: "#5B5CFF",
           "accent-content": "#ffffff",
