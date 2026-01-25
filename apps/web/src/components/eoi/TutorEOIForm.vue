@@ -1,24 +1,46 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { submitTutorEOI } from "../../services/tutorEoi.service";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 
 const fullName = ref("");
 const email = ref("");
 const phone = ref("");
-const tutoringMode = ref("Online");
 const university = ref("");
 const degree = ref("");
 const unitsText = ref("");
-const expertiseText = ref("");
-const availability = ref("");
-const experience = ref("");
-const linkedInUrl = ref("");
-const resumeUrl = ref("");
+const tutoringMode = ref("Online");
 const consent = ref(false);
 
+const academicRecordFile = ref(null);
+const academicRecordUrl = ref("");
+
 const loading = ref(false);
+const uploading = ref(false);
 const successMsg = ref("");
 const errorMsg = ref("");
+
+const formErrorId = "tutor-eoi-form-error";
+const formSuccessId = "tutor-eoi-form-success";
+
+const fullNameId = "tutor-full-name";
+const emailId = "tutor-email";
+const phoneId = "tutor-phone";
+const tutoringModeId = "tutor-mode";
+const universityId = "tutor-university";
+const degreeId = "tutor-degree";
+const unitsId = "tutor-units";
+const unitsHelpId = "tutor-units-help";
+const academicFileId = "tutor-academic-record";
+const academicHelpId = "tutor-academic-help";
+const consentId = "tutor-consent";
+
+const isBusy = computed(() => loading.value || uploading.value);
 
 function splitCSV(text) {
   return text
@@ -32,24 +54,75 @@ function resetMsgs() {
   errorMsg.value = "";
 }
 
+function onPickFile(e) {
+  const f = e?.target?.files?.[0] || null;
+  academicRecordFile.value = f;
+  academicRecordUrl.value = "";
+}
+
+async function uploadAcademicRecord() {
+  if (!academicRecordFile.value) return "";
+
+  uploading.value = true;
+  try {
+    const storage = getStorage();
+    const safeEmail = (email.value || "unknown")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9@._-]/g, "");
+    const safeName = (fullName.value || "tutor")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]/g, "");
+    const ext = academicRecordFile.value.name.split(".").pop() || "file";
+    const path = `tutor-eoi/semester-1-2026/${safeEmail}/${Date.now()}-${safeName}.${ext}`;
+    const fileRef = storageRef(storage, path);
+
+    await uploadBytes(fileRef, academicRecordFile.value, {
+      contentType: academicRecordFile.value.type || "application/octet-stream",
+    });
+
+    const url = await getDownloadURL(fileRef);
+    academicRecordUrl.value = url;
+    return url;
+  } catch (e) {
+    errorMsg.value = "Upload failed. Please try again.";
+    return "";
+  } finally {
+    uploading.value = false;
+  }
+}
+
 async function submit() {
   resetMsgs();
   loading.value = true;
 
   try {
+    if (!academicRecordFile.value) {
+      errorMsg.value = "Please upload your academic record before submitting.";
+      return;
+    }
+
+    let recordUrl = academicRecordUrl.value;
+    if (!recordUrl) {
+      recordUrl = await uploadAcademicRecord();
+    }
+
+    if (!recordUrl || !/^https?:\/\/.+/i.test(recordUrl)) {
+      errorMsg.value = "Upload failed. Please try again.";
+      return;
+    }
+
     const payload = {
+      semester: "Semester 1, 2026",
       fullName: fullName.value,
       email: email.value,
       phone: phone.value,
-      tutoringMode: tutoringMode.value,
       university: university.value,
       degree: degree.value,
       units: splitCSV(unitsText.value),
-      expertiseAreas: splitCSV(expertiseText.value),
-      availability: availability.value,
-      experienceSummary: experience.value,
-      linkedInUrl: linkedInUrl.value,
-      resumeUrl: resumeUrl.value,
+      tutoringMode: tutoringMode.value,
+      academicRecordUrl: recordUrl,
       consent: consent.value,
     };
 
@@ -64,190 +137,197 @@ async function submit() {
 </script>
 
 <template>
-  <form class="space-y-5" @submit.prevent="submit">
-    <!-- Header -->
+  <form
+    class="space-y-5"
+    @submit.prevent="submit"
+    :aria-busy="isBusy"
+    :aria-describedby="
+      errorMsg ? formErrorId : successMsg ? formSuccessId : undefined
+    "
+  >
     <div class="flex items-start justify-between gap-4">
       <div>
         <div class="text-xl md:text-2xl font-extrabold tracking-tight">
-          Tutor EOI Form
+          Tutor Registration — Semester 1, 2026
         </div>
         <div class="mt-1 text-sm opacity-70">
-          Fill in the basics — we’ll contact you if your profile matches demand.
+          UniT connects you with students in subjects you’ve previously excelled
+          in, so you can tutor consistently throughout the semester.
         </div>
       </div>
-      <div class="badge badge-primary badge-outline">2 minutes</div>
     </div>
 
-    <div v-if="successMsg" class="alert alert-success">
+    <div
+      v-if="successMsg"
+      class="alert alert-success"
+      role="status"
+      aria-live="polite"
+      :id="formSuccessId"
+    >
       <span>{{ successMsg }}</span>
     </div>
-    <div v-if="errorMsg" class="alert alert-error">
+    <div
+      v-if="errorMsg"
+      class="alert alert-error"
+      role="alert"
+      aria-live="assertive"
+      :id="formErrorId"
+    >
       <span>{{ errorMsg }}</span>
     </div>
 
-    <!-- Form grid: stable across breakpoints -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Full name -->
-      <label class="form-control w-full">
+      <label class="form-control w-full" :for="fullNameId">
         <div class="label"><span class="label-text">Full name</span></div>
         <input
+          :id="fullNameId"
           v-model="fullName"
           class="input input-bordered w-full"
-          placeholder="Your name"
+          placeholder="Your full name"
           autocomplete="name"
+          required
         />
       </label>
 
-      <!-- Email -->
-      <label class="form-control w-full">
-        <div class="label"><span class="label-text">Email</span></div>
+      <label class="form-control w-full" :for="emailId">
+        <div class="label"><span class="label-text">Email address</span></div>
         <input
+          :id="emailId"
           v-model="email"
           class="input input-bordered w-full"
           placeholder="name@email.com"
           autocomplete="email"
+          inputmode="email"
+          required
         />
       </label>
 
-      <!-- Phone -->
-      <label class="form-control w-full">
+      <label class="form-control w-full" :for="phoneId">
         <div class="label">
-          <span class="label-text">Phone (optional)</span>
+          <span class="label-text">Phone No (optional)</span>
         </div>
         <input
+          :id="phoneId"
           v-model="phone"
           class="input input-bordered w-full"
           placeholder="+61..."
           autocomplete="tel"
+          inputmode="tel"
         />
       </label>
 
-      <!-- Mode -->
-      <label class="form-control w-full">
+      <label class="form-control w-full" :for="tutoringModeId">
         <div class="label"><span class="label-text">Tutoring mode</span></div>
-        <select v-model="tutoringMode" class="select select-bordered w-full">
+        <select
+          :id="tutoringModeId"
+          v-model="tutoringMode"
+          class="select select-bordered w-full"
+          required
+        >
           <option>Online</option>
-          <option>On-campus</option>
+          <option>In person</option>
           <option>Hybrid</option>
         </select>
       </label>
 
-      <!-- University -->
-      <label class="form-control w-full">
+      <label class="form-control w-full" :for="universityId">
         <div class="label"><span class="label-text">University</span></div>
         <input
+          :id="universityId"
           v-model="university"
           class="input input-bordered w-full"
           placeholder="Monash University"
+          required
         />
       </label>
 
-      <!-- Degree -->
-      <label class="form-control w-full">
-        <div class="label">
-          <span class="label-text">Degree (optional)</span>
-        </div>
+      <label class="form-control w-full" :for="degreeId">
+        <div class="label"><span class="label-text">Degree</span></div>
         <input
+          :id="degreeId"
           v-model="degree"
           class="input input-bordered w-full"
-          placeholder="Master of IT"
+          placeholder="Bachelor of ..."
+          required
         />
       </label>
 
-      <!-- Units (span full width for stability) -->
-      <label class="form-control w-full lg:col-span-2">
+      <label class="form-control w-full lg:col-span-2" :for="unitsId">
         <div class="label">
-          <span class="label-text">Units you can tutor (comma separated)</span>
+          <span class="label-text"
+            >Subjects looking to tutor in Semester 1, 2026 (comma
+            separated)</span
+          >
         </div>
         <input
+          :id="unitsId"
           v-model="unitsText"
           class="input input-bordered w-full"
           placeholder="FIT2099, FIT5137"
+          :aria-describedby="unitsHelpId"
+          required
         />
+        <div class="mt-2 text-xs opacity-60" :id="unitsHelpId">
+          Note: You must have achieved a grade of 7 in the course to be eligible
+          to tutor it.
+        </div>
       </label>
 
-      <!-- Expertise -->
-      <label class="form-control w-full lg:col-span-2">
+      <label class="form-control w-full lg:col-span-2" :for="academicFileId">
         <div class="label">
-          <span class="label-text">Expertise areas (comma separated)</span>
+          <span class="label-text"
+            >Academic records for verification (required)</span
+          >
         </div>
         <input
-          v-model="expertiseText"
-          class="input input-bordered w-full"
-          placeholder="Databases, Web Development"
+          :id="academicFileId"
+          type="file"
+          class="file-input file-input-bordered w-full"
+          accept=".pdf,.jpg,.jpeg,.png"
+          @change="onPickFile"
+          :aria-describedby="academicHelpId"
+          required
         />
-      </label>
-
-      <!-- Availability (full width) -->
-      <label class="form-control w-full lg:col-span-2">
-        <div class="label"><span class="label-text">Availability</span></div>
-        <textarea
-          v-model="availability"
-          class="textarea textarea-bordered w-full min-h-[120px]"
-          placeholder="Days/times you can tutor, timezone, preferred session length"
-        />
-      </label>
-
-      <!-- Experience -->
-      <label class="form-control w-full lg:col-span-2">
-        <div class="label">
-          <span class="label-text">Experience summary (optional)</span>
+        <div class="mt-2 text-xs opacity-60" :id="academicHelpId">
+          Records are kept private and used for verification purposes only.
         </div>
-        <textarea
-          v-model="experience"
-          class="textarea textarea-bordered w-full min-h-[120px]"
-          placeholder="Tutoring, mentoring, grades, projects, teaching experience"
-        />
-      </label>
-
-      <!-- LinkedIn -->
-      <label class="form-control w-full">
-        <div class="label">
-          <span class="label-text">LinkedIn URL (optional)</span>
-        </div>
-        <input
-          v-model="linkedInUrl"
-          class="input input-bordered w-full"
-          placeholder="https://linkedin.com/in/..."
-        />
-      </label>
-
-      <!-- Resume -->
-      <label class="form-control w-full">
-        <div class="label">
-          <span class="label-text">Resume URL (optional)</span>
-        </div>
-        <input
-          v-model="resumeUrl"
-          class="input input-bordered w-full"
-          placeholder="https://drive.google.com/..."
-        />
       </label>
     </div>
 
-    <!-- Consent -->
-    <label class="cursor-pointer flex items-start gap-3">
+    <div class="flex items-start gap-3">
       <input
+        :id="consentId"
         v-model="consent"
         type="checkbox"
         class="checkbox checkbox-primary mt-1"
+        required
       />
-      <span class="text-sm opacity-80 leading-relaxed">
-        I consent to UniT storing my details for tutor recruitment and
-        contacting me about next steps.
-      </span>
-    </label>
+      <label :for="consentId" class="cursor-pointer">
+        <span class="text-sm opacity-80 leading-relaxed">
+          I consent to UniT storing my details for tutor recruitment and
+          contacting me about next steps.
+        </span>
+      </label>
+    </div>
 
-    <!-- Submit -->
-    <button class="btn btn-primary btn-block" type="submit" :disabled="loading">
-      <span v-if="loading" class="loading loading-spinner"></span>
+    <button class="btn btn-primary btn-block" type="submit" :disabled="isBusy">
+      <span
+        v-if="isBusy"
+        class="loading loading-spinner"
+        aria-hidden="true"
+      ></span>
       <span>{{
-        loading ? "Submitting..." : "Submit Expression of Interest"
+        uploading
+          ? "Uploading..."
+          : loading
+            ? "Submitting..."
+            : "Submit Expression of Interest"
       }}</span>
     </button>
 
     <div class="text-xs opacity-60 text-center">
-      We will review and contact you if your profile matches upcoming demand.
+      We will review and contact you if your profile matches Semester 1, 2026
+      demand.
     </div>
   </form>
 </template>
