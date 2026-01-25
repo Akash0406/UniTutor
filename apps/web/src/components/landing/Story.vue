@@ -6,42 +6,79 @@ import BaseCard from "../common/BaseCard.vue";
 <template>
   <SectionShell
     title="The mid-semester tutor search problem"
-    subtitle="When you find a tutor late, you often get mismatch. UniT is built to prevent that from Week 1."
+    subtitle="When help starts too late, mismatches happen. UniT is designed to prevent that from Week 1."
   >
-    <div class="grid lg:grid-cols-2 gap-6 items-start">
-      <BaseCard>
-        <h3 class="text-xl font-extrabold">What usually happens</h3>
+    <div
+      class="grid lg:grid-cols-2 gap-6 items-start"
+      role="region"
+      aria-labelledby="mid-semester-problem"
+    >
+      <!-- Problem side -->
+      <BaseCard
+        class="h-full shadow-sm transition hover:shadow-lg focus-within:shadow-lg"
+      >
+        <h3
+          id="mid-semester-problem"
+          class="text-xl font-extrabold tracking-tight"
+        >
+          What usually happens
+        </h3>
+
         <p class="mt-3 opacity-80 leading-relaxed">
-          It’s mid-semester, you’re staring at a looming assignment, stress
-          creeping in, and the deadline is just days away. You search for a
-          tutor online and pick someone who claims they are familiar with the
-          topic.
+          It’s mid-semester. An assignment deadline is approaching, stress is
+          building, and you realise you’re not fully understanding the content.
+          You search online for a tutor and choose someone who says they are
+          “familiar” with the topic.
         </p>
+
         <p class="mt-3 opacity-80 leading-relaxed">
-          The result: they haven’t done your course, their explanations go over
-          your head, and you leave more confused than when you started.
+          The outcome is often frustrating: the tutor hasn’t taken your unit,
+          explanations don’t match your coursework, and you walk away more
+          confused than before.
         </p>
       </BaseCard>
 
-      <BaseCard variant="soft">
-        <h3 class="text-xl font-extrabold">How UniT is different</h3>
-        <ul class="mt-4 space-y-3">
-          <li class="p-4 rounded-2xl bg-base-100 border border-base-300">
+      <!-- UniT difference -->
+      <BaseCard
+        variant="soft"
+        class="h-full shadow-sm transition hover:shadow-lg focus-within:shadow-lg"
+        aria-labelledby="unit-difference"
+      >
+        <h3 id="unit-difference" class="text-xl font-extrabold tracking-tight">
+          How UniT is different
+        </h3>
+
+        <ul
+          class="mt-4 space-y-3"
+          role="list"
+          aria-label="How UniT provides better support"
+        >
+          <li
+            class="p-4 rounded-2xl bg-base-100 border border-base-300 transition hover:bg-base-200/60"
+          >
             <div class="font-semibold">Continuous support</div>
             <div class="opacity-80">
-              Guidance from the first lecture to the final exam.
+              Guidance from the first lecture through to final exams.
             </div>
           </li>
-          <li class="p-4 rounded-2xl bg-base-100 border border-base-300">
+
+          <li
+            class="p-4 rounded-2xl bg-base-100 border border-base-300 transition hover:bg-base-200/60"
+          >
             <div class="font-semibold">Tutors who know your unit</div>
             <div class="opacity-80">
-              They have done the course and excelled at it.
+              Your tutor has completed the same course and achieved strong
+              results.
             </div>
           </li>
-          <li class="p-4 rounded-2xl bg-base-100 border border-base-300">
+
+          <li
+            class="p-4 rounded-2xl bg-base-100 border border-base-300 transition hover:bg-base-200/60"
+          >
             <div class="font-semibold">Proactive help</div>
             <div class="opacity-80">
-              We help every step of the way, not only one-offs.
+              Support is planned ahead of deadlines, not rushed at the last
+              minute.
             </div>
           </li>
         </ul>

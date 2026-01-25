@@ -7,6 +7,7 @@ import Blog from "../pages/Blog.vue";
 import BlogPost from "../pages/BlogPost.vue";
 import Career from "../pages/Career.vue";
 import EOI from "../pages/EOI.vue";
+import HowItWorks from "../pages/HowItWorks.vue";
 import NotFound from "../pages/NotFound.vue";
 
 export default createRouter({
@@ -19,6 +20,7 @@ export default createRouter({
     { path: "/blog/:slug", name: "BlogPost", component: BlogPost, props: true },
     { path: "/career", name: "Career", component: Career },
     { path: "/eoi", name: "EOI", component: EOI },
+    { path: "/howitwork", name: "HIW", component: HowItWorks },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
   ],
   scrollBehavior() {

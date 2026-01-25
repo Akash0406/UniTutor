@@ -98,7 +98,6 @@ async function submit() {
           throughout the semester.
         </div>
       </div>
-      <div class="badge badge-secondary badge-outline">2 minutes</div>
     </div>
 
     <div
