@@ -137,15 +137,9 @@ onBeforeUnmount(() => {
             >
               <button
                 class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="go('/about')"
+                @click="go('/Career')"
               >
-                Mission
-              </button>
-              <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="go('/about')"
-              >
-                Our Team
+                Career
               </button>
               <button
                 class="w-full text-left px-4 py-3 hover:bg-base-200/60"
@@ -175,9 +169,9 @@ onBeforeUnmount(() => {
 
           <button
             class="btn btn-outline btn-sm hidden sm:inline-flex"
-            @click="go('/career')"
+            @click="go('/eoi?t=student')"
           >
-            Expression of Interest
+            Become a Student
           </button>
 
           <button class="btn btn-primary btn-sm" @click="scrollToEOI">

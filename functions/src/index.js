@@ -5,6 +5,8 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { TutorEoiZodSchema } from "./validation/tutorEoi.schema.js";
 import { StudentEoiZodSchema } from "./validation/studentEoi.schema.js";
 
+import { grantAdmin } from "./admin/grantAdmin.js";
+
 initializeApp();
 const db = getFirestore();
 
@@ -40,7 +42,7 @@ export const submitTutorEOI = onCall(
       if (err?.name === "HttpsError") throw err;
       throw new HttpsError("internal", "Internal Server Error");
     }
-  }
+  },
 );
 
 /**
@@ -74,5 +76,12 @@ export const submitStudentEOI = onCall(
       if (err?.name === "HttpsError") throw err;
       throw new HttpsError("internal", "Internal Server Error");
     }
-  }
+  },
 );
+
+export const makeAdmin = onCall(async (req) => {
+  const uid = req.data.uid;
+  if (!uid) throw new Error("UID required");
+
+  return grantAdmin(uid);
+});

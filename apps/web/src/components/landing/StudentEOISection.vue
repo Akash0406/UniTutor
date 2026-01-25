@@ -7,8 +7,8 @@ import StudentEOIForm from "../eoi/StudentEOIForm.vue";
 <template>
   <SectionShell
     id="eoi"
-    title="Expression of Interest: Become a Tutor"
-    subtitle="If you want to tutor with recurring sessions across a semester, register your interest here."
+    title="Expression of Interest: Become a Student"
+    subtitle=""
   >
     <div class="grid lg:grid-cols-2 gap-6 lg:gap-10 items-start">
       <!-- Left: Info -->
