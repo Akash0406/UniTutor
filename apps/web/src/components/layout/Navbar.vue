@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useTheme } from "../../composables/useTheme";
+import logoUrl from "../../assets/Logo.png";
 
 const router = useRouter();
 const route = useRoute();
@@ -9,10 +10,6 @@ const route = useRoute();
 const { theme, toggleTheme } = useTheme();
 const isDark = computed(() => theme.value === "unitDark");
 
-/**
- * Only one dropdown open at a time.
- * values: "solutions" | "news" | "about" | null
- */
 const openMenu = ref(null);
 
 function closeMenus() {
@@ -44,9 +41,7 @@ function scrollToEOI() {
   doScroll();
 }
 
-// Close on outside click + ESC
 function onDocClick(e) {
-  // If click happens inside navbar, ignore.
   const nav = document.getElementById("unit-navbar");
   if (!nav) return;
   if (nav.contains(e.target)) return;
@@ -75,74 +70,70 @@ onBeforeUnmount(() => {
   >
     <div class="container-max">
       <div class="h-16 flex items-center justify-between">
-        <!-- Brand -->
         <button
-          class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-base-200/60 transition"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-base-200/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
           @click="go('/')"
+          aria-label="Go to UniT home"
         >
-          <div class="text-xl font-extrabold tracking-tight">UniT</div>
-          <div class="hidden sm:block text-sm opacity-70 font-semibold">
-            The University Tutor
-          </div>
+          <img
+            :src="logoUrl"
+            alt="UniT logo"
+            class="h-25 w-25 rounded-xl object-contain"
+            width="36"
+            height="36"
+            loading="eager"
+            decoding="async"
+          />
         </button>
 
-        <!-- Center nav (desktop) -->
-        <nav class="hidden lg:flex items-center gap-2">
-          <button class="btn btn-ghost btn-sm" @click="go('/')">Home</button>
+        <nav
+          class="hidden lg:flex items-center gap-2"
+          aria-label="Primary navigation"
+        >
+          <button
+            class="btn btn-ghost btn-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
+            @click="go('/')"
+          >
+            Home
+          </button>
 
-          <!-- News & Events -->
+          <button
+            class="btn btn-ghost btn-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
+            @click="go('/howitwork')"
+          >
+            How it works
+          </button>
+
           <div class="relative">
             <button
-              class="btn btn-ghost btn-sm inline-flex items-center gap-2"
-              :class="openMenu === 'news' ? 'bg-base-200/60' : ''"
-              @click="toggleMenu('news')"
-            >
-              News &amp; Events
-              <span class="opacity-70">▾</span>
-            </button>
-
-            <div
-              v-show="openMenu === 'news'"
-              class="absolute left-0 mt-2 w-56 rounded-2xl border border-base-300 bg-base-100 shadow-lg overflow-hidden"
-            >
-              <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="go('/news')"
-              >
-                News
-              </button>
-              <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
-                @click="go('/blog')"
-              >
-                Blog
-              </button>
-            </div>
-          </div>
-
-          <!-- About -->
-          <div class="relative">
-            <button
-              class="btn btn-ghost btn-sm inline-flex items-center gap-2"
+              class="btn btn-ghost btn-sm inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
               :class="openMenu === 'about' ? 'bg-base-200/60' : ''"
               @click="toggleMenu('about')"
+              :aria-expanded="openMenu === 'about'"
+              aria-haspopup="menu"
+              aria-controls="about-menu"
             >
-              About Us
-              <span class="opacity-70">▾</span>
+              About
+              <span class="opacity-70" aria-hidden="true">▾</span>
             </button>
 
             <div
               v-show="openMenu === 'about'"
+              id="about-menu"
               class="absolute left-0 mt-2 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg overflow-hidden"
+              role="menu"
+              aria-label="About menu"
             >
               <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
+                class="w-full text-left px-4 py-3 hover:bg-base-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                role="menuitem"
                 @click="go('/Career')"
               >
                 Career
               </button>
               <button
-                class="w-full text-left px-4 py-3 hover:bg-base-200/60"
+                class="w-full text-left px-4 py-3 hover:bg-base-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                role="menuitem"
                 @click="go('/about')"
               >
                 Contact
@@ -151,30 +142,72 @@ onBeforeUnmount(() => {
           </div>
         </nav>
 
-        <!-- Right actions -->
         <div class="flex items-center gap-3">
-          <!-- Theme toggle -->
           <button
             type="button"
-            class="btn btn-ghost btn-sm"
-            @click="
-              () => {
-                console.log('theme clicked');
-                toggleTheme();
-              }
+            class="btn btn-ghost btn-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
+            @click="toggleTheme()"
+            :aria-label="
+              isDark ? 'Switch to light theme' : 'Switch to dark theme'
             "
           >
-            {{ isDark ? "Light" : "Dark" }}
+            <span class="inline-flex items-center gap-2">
+              <svg
+                v-if="isDark"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+
+              <svg
+                v-else
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M21 13.2A7.5 7.5 0 0 1 10.8 3a6.5 6.5 0 1 0 10.2 10.2Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <span class="hidden sm:inline">
+                {{ isDark ? "Light" : "Dark" }}
+              </span>
+            </span>
           </button>
 
           <button
-            class="btn btn-outline btn-sm hidden sm:inline-flex"
+            class="btn btn-outline btn-sm hidden sm:inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
             @click="go('/eoi?t=student')"
           >
             Become a Student
           </button>
 
-          <button class="btn btn-primary btn-sm" @click="scrollToEOI">
+          <button
+            class="btn btn-primary btn-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
+            @click="go('/eoi?t=tutor')"
+          >
             Become a Tutor
           </button>
         </div>
